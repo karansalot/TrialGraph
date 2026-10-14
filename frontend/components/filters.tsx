@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { get, type Meta } from "@/lib/api";
+import { Term } from "./ux";
 
 interface Filters { category: string; state: string; threshold: number }
 interface Ctx extends Filters { meta: Meta | null; error: string | null; set: (p: Partial<Filters>) => void; categoryLabel: string }
@@ -60,7 +61,7 @@ export function FilterBar({ showThreshold = true, children }: { showThreshold?: 
   const { meta, category, state, threshold, set } = useFilters();
   return (
     <div className="flex flex-wrap items-end gap-x-4 gap-y-2 rounded-lg border bg-card px-3 py-2.5" data-testid="filter-bar">
-      <label className="grid gap-1 text-xs text-muted-foreground">Cancer type
+      <label className="grid gap-1 text-xs text-muted-foreground"><span>Cancer type or <Term k="lens">trial lens</Term></span>
         <select aria-label="Cancer type" className={sel} value={category} onChange={(e) => set({ category: e.target.value })}>
           {!meta && <option value="all">All oncology</option>}
           {meta && <optgroup label="Cancer type">{meta.categories.filter((c) => c.group === "cancer").map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}</optgroup>}
@@ -74,7 +75,7 @@ export function FilterBar({ showThreshold = true, children }: { showThreshold?: 
         </select>
       </label>
       {showThreshold && (
-        <label className="grid gap-1 text-xs text-muted-foreground">Distance threshold (straight-line)
+        <label className="grid gap-1 text-xs text-muted-foreground"><Term k="threshold">Distance threshold (straight-line)</Term>
           <select aria-label="Distance threshold" className={sel} value={threshold} onChange={(e) => set({ threshold: Number(e.target.value) })}>
             {[25, 50, 75, 100, 150].map((t) => <option key={t} value={t}>{t} miles</option>)}
           </select>

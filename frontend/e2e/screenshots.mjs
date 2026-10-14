@@ -6,12 +6,14 @@ const b = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-un
 const p = await b.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
 const go = async (path, wait = 3500) => { await p.goto(BASE + path, { waitUntil: "networkidle" }); await p.waitForTimeout(wait); };
 await go("/insights"); await p.screenshot({ path: OUT + "insights.png" });
-await go("/"); await p.screenshot({ path: OUT + "overview.png" });
+await go("/"); await p.getByRole("button", { name: "Dismiss introduction" }).click(); await p.waitForTimeout(400); await p.screenshot({ path: OUT + "overview.png" });
 await go("/access?category=lens_phase1"); await p.getByTestId("gap-table").locator("tr").first().click(); await p.waitForTimeout(2500);
 await p.screenshot({ path: OUT + "access.png" });
 await go("/simulator"); await p.getByLabel("Plan size").selectOption("4"); await p.getByTestId("build-plan").click(); await p.waitForTimeout(3500);
 await p.screenshot({ path: OUT + "simulator.png" });
 await go("/trials"); await p.getByTestId("trial-rows").locator("tr").first().getByRole("link").first().click(); await p.waitForTimeout(3500);
+await p.screenshot({ path: OUT + "trial.png" });
+await go("/"); await p.keyboard.press("Control+k"); await p.getByTestId("palette-input").fill("Stanis"); await p.waitForTimeout(800);
 await p.screenshot({ path: OUT + "trial.png" });
 await b.close();
 console.log("screenshots written to", OUT);

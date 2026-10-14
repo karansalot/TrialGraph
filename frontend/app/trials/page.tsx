@@ -13,6 +13,11 @@ const sel = "h-8 rounded-md border border-input bg-background px-2 text-sm";
 export default function Trials() {
   const { category, state, meta } = useFilters();
   const [q, setQ] = useState(""); const [query, setQuery] = useState("");
+  useEffect(() => {
+    const init = new URLSearchParams(window.location.search).get("q");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- read ?q= deep link once
+    if (init) { setQ(init); setQuery(init); }
+  }, []);
   const [status, setStatus] = useState("recruiting"); const [phase, setPhase] = useState(""); const [stype, setStype] = useState("");
   const [sort, setSort] = useState("updated");
   useEffect(() => { const t = setTimeout(() => setQuery(q), 300); return () => clearTimeout(t); }, [q]);
@@ -22,7 +27,7 @@ export default function Trials() {
   const page = pg.k === fkey ? pg.page : 1;
   const setPage = (p: number) => setPg({ k: fkey, page: p });
   const key = [category, state, query, status, phase, stype, sort, page].join("|");
-  const { data, error, loading } = useData<Json>(() => get("/api/trials", { category, state, q: query, status, phase, study_type: stype, sort, page, page_size: 25 }), key);
+  const { data, error, loading, reload } = useData<Json>(() => get("/api/trials", { category, state, q: query, status, phase, study_type: stype, sort, page, page_size: 25 }), key);
   const pages = data ? Math.max(1, Math.ceil(data.total / 25)) : 1;
 
   return (
@@ -44,7 +49,7 @@ export default function Trials() {
           <select aria-label="Sort" className={sel} value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="updated">Last updated</option><option value="recruiting_sites">Most recruiting sites</option><option value="sites">Most sites</option><option value="nct">NCT ID</option></select></label>
       </FilterBar>
-      <ErrorNote error={error} />
+      <ErrorNote error={error} onRetry={reload} />
       <div className="rounded-lg border bg-card">
         <div className="flex items-center justify-between border-b px-4 py-2 text-sm">
           <span data-testid="trial-count">{data ? <><b>{num(data.total)}</b> studies match</> : "Searching…"}{loading && data ? " · updating…" : ""}</span>
@@ -57,8 +62,8 @@ export default function Trials() {
             <TableBody data-testid="trial-rows">
               {data.trials.map((t: Json) => (
                 <TableRow key={t.nct_id}>
-                  <TableCell className="font-mono text-xs"><Link className="text-blue-700 hover:underline" href={`/trials/${t.nct_id}`}>{t.nct_id}</Link></TableCell>
-                  <TableCell className="max-w-xl whitespace-normal"><Link href={`/trials/${t.nct_id}`} className="font-medium hover:underline">{t.brief_title}</Link>
+                  <TableCell className="font-mono text-xs"><Link className="text-blue-700 hover:underline" href={`/trial?id=${t.nct_id}`}>{t.nct_id}</Link></TableCell>
+                  <TableCell className="max-w-xl whitespace-normal"><Link href={`/trial?id=${t.nct_id}`} className="font-medium hover:underline">{t.brief_title}</Link>
                     <div className="text-[11px] text-muted-foreground">{t.lead_sponsor} · {(t.conditions ?? []).slice(0, 3).join("; ")}{(t.conditions ?? []).length > 3 ? "…" : ""}</div></TableCell>
                   <TableCell><StatusBadge group={t.status_group} label={meta?.statuses.find((s) => s.id === t.status_group)?.label} /></TableCell>
                   <TableCell className="text-xs">{(t.phases ?? []).join(" / ").replaceAll("PHASE", "Ph ") || "—"}</TableCell>

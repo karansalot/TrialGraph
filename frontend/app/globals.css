@@ -128,3 +128,6 @@
     @apply font-sans;
   }
 }
+/* visible keyboard focus everywhere */
+:where(a, button, select, input, summary, [tabindex]):focus-visible { outline: 2px solid #2a78d6; outline-offset: 2px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }

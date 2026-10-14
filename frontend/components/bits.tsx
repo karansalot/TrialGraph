@@ -4,9 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { STATUS_STYLE } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { ShareButton } from "./ux";
 
 /** Data hook: refetches when `key` changes; keeps the previous data visible while loading. */
-export function useData<T>(fn: () => Promise<T>, key: string) {
+export function useData<T>(fn: () => Promise<T>, key0: string) {
+  const [nonce, setNonce] = useState(0);
+  const key = `${key0}#${nonce}`;
   const [state, setState] = useState<{ data: T | null; error: string | null; key: string | null }>({ data: null, error: null, key: null });
   useEffect(() => {
     let live = true;
@@ -15,17 +18,17 @@ export function useData<T>(fn: () => Promise<T>, key: string) {
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
-  return { data: state.data, error: state.key === key ? state.error : null, loading: state.key !== key };
+  return { data: state.data, error: state.key === key ? state.error : null, loading: state.key !== key, reload: () => setNonce((n) => n + 1) };
 }
 
 export function PageHeader({ title, lead, children }: { title: string; lead: ReactNode; children?: ReactNode }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="max-w-3xl">
-        <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{lead}</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{lead}</p>
       </div>
-      {children}
+      <div className="flex flex-wrap items-center gap-2 print:hidden">{children}<ShareButton /></div>
     </div>
   );
 }
@@ -64,12 +67,16 @@ export function StatusBadge({ group, label }: { group: string; label?: string })
     {label ?? group.replaceAll("_", " ")}</span>;
 }
 
-export function Loading({ h = 200 }: { h?: number }) { return <Skeleton style={{ height: h }} className="w-full" />; }
+export function Loading({ h = 200, label }: { h?: number; label?: string }) {
+  return <div className="relative" aria-busy="true"><Skeleton style={{ height: h }} className="w-full" />
+    {label && <span className="absolute inset-0 grid place-items-center text-xs text-muted-foreground">{label}</span>}</div>;
+}
 
-export function ErrorNote({ error }: { error: string | null }) {
+export function ErrorNote({ error, onRetry }: { error: string | null; onRetry?: () => void }) {
   if (!error) return null;
-  return <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-    Could not load data from the TrialGraph API. {error}</div>;
+  return <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+    <span>Something went wrong loading this view. {error.length < 160 ? error : ""}</span>
+    {onRetry && <button onClick={onRetry} className="rounded border border-red-300 bg-white px-2 py-0.5 text-xs font-medium hover:bg-red-100">Try again</button>}</div>;
 }
 
 export function Callout({ children, tone = "info" }: { children: ReactNode; tone?: "info" | "warn" }) {

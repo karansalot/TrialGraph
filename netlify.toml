@@ -1,0 +1,34 @@
+# Netlify: static edition of TrialGraph (no server; analysis runs in the browser on the bundled snapshot).
+# Netlify -> Add new site -> Import from GitHub -> pick this repo. Everything below is picked up automatically.
+[build]
+  base = "frontend"
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm build:static"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# The data snapshot changes only when the pipeline is re-run; let browsers keep it for a day.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404

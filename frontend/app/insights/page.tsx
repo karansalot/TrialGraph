@@ -6,6 +6,7 @@ import { Curve, HBar } from "@/components/charts";
 import { get, type Json } from "@/lib/api";
 import { compact, num, pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { Explainer } from "@/components/ux";
 
 const THEME_STYLE: Record<string, string> = {
   "Trial type": "bg-sky-50 text-sky-800 border-sky-200", "Data quality": "bg-amber-50 text-amber-900 border-amber-200",
@@ -63,8 +64,12 @@ export default function Insights() {
           <select aria-label="Insight threshold" className="h-8 rounded-md border bg-background px-2 text-sm" value={threshold} onChange={(e) => setThreshold(Number(e.target.value))}>
             {[25, 50, 75, 100].map((t) => <option key={t} value={t}>{t} miles</option>)}</select></label>
       </PageHeader>
+      <Explainer>
+        <p>Each card is a finding the data supports at the chosen distance. The big number is the headline, the text explains it in plain words, and <b>Explore this</b> opens the exact view so you can check it.</p>
+        <p>County comparisons describe places, not individual people, and do not prove cause and effect. Cards marked “uses hypothetical sites” come from the simulator.</p>
+      </Explainer>
       <ErrorNote error={error} />
-      {!data ? <Loading h={600} /> : (
+      {!data ? <Loading h={600} label="Generating insights…" /> : (
         <>
           <div className="grid gap-4 lg:grid-cols-2" data-testid="insights">
             {data.insights.map((i: Json) => <InsightCard key={i.id} i={i} wide={i.id === "double_burden" || i.id === "diminishing_returns"} />)}

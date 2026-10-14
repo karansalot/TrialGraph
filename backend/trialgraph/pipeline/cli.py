@@ -7,6 +7,7 @@
     trialgraph all [--refresh]       everything above, in order
     trialgraph freshness             print the data-freshness report
     trialgraph docs                  regenerate docs/DATA_DICTIONARY.md from the database
+    trialgraph export-static         write the data snapshot for the serverless static edition
 """
 from __future__ import annotations
 
@@ -17,7 +18,7 @@ import time
 
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="trialgraph", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("step", choices=["extract", "transform", "load", "analyze", "all", "freshness", "docs"])
+    ap.add_argument("step", choices=["extract", "transform", "load", "analyze", "all", "freshness", "docs", "export-static"])
     ap.add_argument("--refresh", action="store_true", help="re-download sources even if cached")
     ap.add_argument("--only", default="", help="extract only: comma list of ctgov,acs,places,geo")
     a = ap.parse_args(argv)
@@ -53,7 +54,11 @@ def main(argv: list[str] | None = None) -> None:
         from . import docs as D
         print("wrote", D.write())
 
-    steps = {"docs": [docs], "extract": [extract], "transform": [transform], "load": [load], "analyze": [analyze],
+    def export_static():
+        from .export_static import export
+        print(json.dumps(export(), indent=2))
+
+    steps = {"export-static": [export_static], "docs": [docs], "extract": [extract], "transform": [transform], "load": [load], "analyze": [analyze],
              "all": [extract, transform, load, analyze], "freshness": [freshness]}
     for fn in steps[a.step]:
         fn()

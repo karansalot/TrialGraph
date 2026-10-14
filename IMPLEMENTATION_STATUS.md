@@ -22,6 +22,7 @@ time. They are listed under "Not verified".
 | Phase 7 - tests and docs | done | 78 pytest tests pass; 10 Playwright tests pass; production `next build`, ESLint, `tsc` and ruff clean |
 | Feature round 2 | done | greedy multi-site plan builder, coverage by cancer type, sponsor mix, facility profiles, shareable filter URLs, county CSV export |
 | Feature round 3 | done | five trial-type lenses (early-phase, phase 3, open to 75+, pediatric, recently verified) through every analysis; auto-generated Insights page (8 findings with evidence and deep links); overview insight teasers |
+| Feature round 4 - usability + hosting | done | welcome card, page explainers, glossary tooltips, ⌘K jump-to search, share links with toasts, help panel, mobile menu, skip link and focus styles, retry on errors, saved scenarios; static edition (in-browser engine, verified identical to the API by `e2e/parity.mjs`); `netlify.toml`; GitHub Pages workflow; 12 Playwright tests pass against both editions |
 | Demo | done | `docs/demo/trialgraph-demo.webm` (about 3 min 15 s, includes rounds 2 and 3); README screenshots in `docs/screenshots/` |
 | Pilot geography mode | done | `TG_PILOT_STATES=MT,WY,ID` builds in about 9 s (cached sources); verified in round 1 and re-run after round 3 (see below) |
 | Demo | done, predates the second feature round | `docs/demo/trialgraph-demo.webm`; the plan builder, cancer-type table and facility pages are not in the recording |
@@ -34,7 +35,8 @@ about 2 minutes for ClinicalTrials.gov and a few minutes for the 800 MB of ACS f
 | Item | State | What is needed |
 |---|---|---|
 | Docker Compose stack and both Dockerfiles | written, never built or run (no Docker on this machine) | `docker compose up` on a machine with Docker; note the compose database is PostGIS 16-3.4 while local development used PostgreSQL 18 / PostGIS 3.6 |
-| GitHub Actions (`ci.yml`, `refresh-data.yml`) | written, never run (repository has no remote) | push to GitHub; the integration job depends on live public endpoints |
+| GitHub Actions (`ci.yml`, `refresh-data.yml`, `pages.yml`) | written, never run (nothing has been pushed yet) | push to GitHub; the integration job depends on live public endpoints; Pages needs to be enabled in repo settings |
+| Netlify deployment | `netlify.toml` written; the static build it runs was built and tested locally | connect the GitHub repo in Netlify |
 | Road travel time | implemented as an optional OSRM `table` lookup in county profiles; never exercised | set `TG_OSRM_URL` to an OSRM-compatible server and test; the UI states that no routing source is configured |
 
 ## Deliberate scope decisions

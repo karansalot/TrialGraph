@@ -1,6 +1,6 @@
 # TrialGraph developer commands (no-Docker path; see docker-compose.yml for the container path).
 ENV := .tools/env/bin
-.PHONY: setup db db-stop pipeline refresh api web dev test test-unit test-e2e lint demo
+.PHONY: setup db db-stop pipeline refresh api web dev test test-unit test-e2e lint demo static
 
 setup:            ## create the project-local toolchain (Python 3.12 + PostgreSQL/PostGIS) and install deps
 	./scripts/dev_env.sh
@@ -27,3 +27,6 @@ lint:
 	$(ENV)/ruff check backend && cd frontend && pnpm typecheck && pnpm lint
 demo:             ## record the product walkthrough video into docs/demo/
 	cd frontend && node e2e/demo.mjs
+static:           ## export the data snapshot and build the static edition into frontend/out (serve with pnpm serve:static)
+	$(ENV)/trialgraph export-static
+	cd frontend && pnpm build:static

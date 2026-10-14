@@ -27,6 +27,8 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm build
+      - name: Build static edition (what Netlify / GitHub Pages serve)
+        run: pnpm build:static
 
   # Full pipeline on a documented pilot geography against a real PostGIS service, then
   # data-validation, API and browser tests on the result. Uses live public sources.

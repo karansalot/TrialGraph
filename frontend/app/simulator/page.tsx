@@ -1,11 +1,13 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Callout, ErrorNote, Loading, PageHeader, Panel, useData } from "@/components/bits";
 import { BeforeAfter } from "@/components/charts";
 import { FilterBar, useFilters } from "@/components/filters";
+import { Explainer, Term, useToast } from "@/components/ux";
 import { CountyMap, type Choropleth } from "@/components/map/county-map";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { API, get, post, type Json } from "@/lib/api";
+import { get, post, type Json } from "@/lib/api";
+import { downloadCandidates } from "@/lib/downloads";
 import { C, compact, num, pct } from "@/lib/format";
 
 interface Site { lat: number; lon: number; label: string }
@@ -29,6 +31,13 @@ export default function Simulator() {
   const [customWeights, setWeights] = useState<Record<string, number> | null>(null);
   const [minGain, setMinGain] = useState(5000);
   const [saved, setSaved] = useState<Saved[]>([]);
+  const toast = useToast();
+  // saved scenarios survive reloads (kept only in this browser)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restore browser-only state after hydration
+    try { const s = localStorage.getItem("tg-scenarios"); if (s) setSaved(JSON.parse(s)); } catch { /* storage unavailable */ }
+  }, []);
+  useEffect(() => { try { localStorage.setItem("tg-scenarios", JSON.stringify(saved.map((x) => ({ ...x, result: { delta: x.result.delta, before: x.result.before, after: x.result.after, equity_groups: x.result.equity_groups } })))); } catch { /* ignore */ } }, [saved]);
   const [tab, setTab] = useState<"rank" | "sens">("rank");
   const [planK, setPlanK] = useState(3);
   const [plan, setPlan] = useState<Json | null>(null);
@@ -53,10 +62,8 @@ export default function Simulator() {
 
   const add = (s: Site) => setSites((o) => (o.length >= 10 ? o : [...o, s]));
   const wsum = Object.values(weights ?? {}).reduce((a, b) => a + b, 0) || 1;
-  const exportCsv = async () => {
-    const r = await fetch(`${API}/api/simulator/candidates.csv`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...body, weights, min_gain_pop: minGain, limit: 500 }) });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(await r.blob()); a.download = "trialgraph_candidates.csv"; a.click();
-  };
+  const exportCsv = () => downloadCandidates({ ...body, weights, min_gain_pop: minGain, limit: 500 });
+
   const buildPlan = async () => {
     setPlanBusy(true);
     try {
@@ -71,8 +78,12 @@ export default function Simulator() {
     <>
       <PageHeader title="Site Strategy Simulator" lead="Place hypothetical trial sites and see how straight-line coverage would change, or rank every county as a candidate location with an explainable score you control." />
       <Callout tone="warn"><b>Hypothetical scenarios only.</b> Candidate sites are not real or planned facilities. Scores measure geographic need under the assumptions shown — they say nothing about feasibility and are not institutional recommendations.</Callout>
+      <Explainer>
+        <p><b>Try a what-if:</b> click anywhere on the map to drop a <Term k="hypothetical">hypothetical site</Term>, or press <b>Suggest plan</b> to let TrialGraph pick several sites that do not overlap. The panel shows how many more people would live within your distance threshold.</p>
+        <p><b>Compare options:</b> every county is ranked with an <Term k="score">opportunity score</Term> you can re-weight with the sliders. Open the <Term k="sensitivity">sensitivity analysis</Term> to see which picks survive different assumptions. Save scenarios to compare them side by side.</p>
+      </Explainer>
       <FilterBar />
-      <ErrorNote error={base.error ?? rank.error ?? sim.error ?? sens.error} />
+      <ErrorNote error={base.error ?? rank.error ?? sim.error ?? sens.error} onRetry={() => { base.reload(); rank.reload(); sim.reload(); sens.reload(); }} />
 
       <div className="grid gap-3 xl:grid-cols-[1fr_420px]">
         <Panel title="Click the map to add a hypothetical site" note={<>Each click places one hypothetical site that is assumed to recruit for {categoryLabel.toLowerCase()} studies. Up to 10 sites per scenario. Colours update to the scenario for affected counties.</>}>
@@ -110,7 +121,7 @@ export default function Simulator() {
                   <div className="rounded-md border px-2 py-2"><div className="text-[11px] text-muted-foreground">Counties affected</div><div className="text-xl font-semibold tabular-nums">{num(d.n_affected_counties)}</div></div>
                 </div>
                 <button data-testid="save-scenario" className="w-full rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-700"
-                  onClick={() => setSaved((o) => [...o, { name: `Scenario ${String.fromCharCode(65 + o.length)}`, category, state, threshold, sites, result: d }])}>Save scenario for comparison</button>
+                  onClick={() => { setSaved((o) => [...o, { name: `Scenario ${String.fromCharCode(65 + o.length)}`, category, state, threshold, sites, result: d }]); toast("Scenario saved - see the comparison table below"); }}>Save scenario for comparison</button>
               </div>)}
           </Panel>
         </div>

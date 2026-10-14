@@ -2,7 +2,7 @@
 import maplibregl from "maplibre-gl";
 import type { ExpressionSpecification, GeoJSONSource, Map as MlMap } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
-import { API } from "@/lib/api";
+import { geoUrl } from "@/lib/api";
 import { SEQ } from "@/lib/format";
 
 export interface MapFacility { id: number; lat: number; lon: number; n: number; name: string | null; city: string | null; usps: string; anon?: boolean }
@@ -29,7 +29,7 @@ const NO_DATA = "#efeeea";
 const CONUS: [[number, number], [number, number]] = [[-125, 24], [-66.5, 49.6]];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cache: Record<string, Promise<any>> = {};
-const geo = (layer: string) => (cache[layer] ??= fetch(`${API}/api/geo/${layer}`).then((r) => r.json()));
+const geo = (layer: "counties" | "states") => (cache[layer] ??= fetch(geoUrl(layer)).then((r) => r.json()));
 
 function bboxOf(geom: { type: string; coordinates: unknown }): [[number, number], [number, number]] {
   let x0 = 180, y0 = 90, x1 = -180, y1 = -90;

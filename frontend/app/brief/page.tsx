@@ -2,7 +2,8 @@
 import { Callout, ErrorNote, Loading, PageHeader, Panel, useData } from "@/components/bits";
 import { FilterBar, useFilters } from "@/components/filters";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { API, get, qs, type Json } from "@/lib/api";
+import { get, type Json } from "@/lib/api";
+import { downloadBrief } from "@/lib/downloads";
 import { dateTime, fmtValue, num, pct } from "@/lib/format";
 
 export default function Brief() {
@@ -14,7 +15,7 @@ export default function Brief() {
     <>
       <PageHeader title="Executive Strategy Brief" lead="A decision-ready summary generated from the live analysis. Every sentence is assembled from computed values; change the filters to regenerate it.">
         <div className="flex gap-2 print:hidden">
-          <a className={btn} data-testid="export-md" href={`${API}/api/brief.md${qs(params)}`} target="_blank" rel="noreferrer">Export Markdown</a>
+          <button className={btn} data-testid="export-md" onClick={() => downloadBrief(params)}>Export Markdown</button>
           <button className={btn} onClick={() => window.print()}>Print / save PDF</button>
         </div>
       </PageHeader>

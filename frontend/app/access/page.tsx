@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Callout, ErrorNote, Loading, PageHeader, Panel, Stat, useData } from "@/components/bits";
 import { HBar } from "@/components/charts";
 import { FilterBar, useFilters } from "@/components/filters";
+import { Explainer, Term } from "@/components/ux";
 import { CountyMap, type Choropleth } from "@/components/map/county-map";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { API, get, qs, type Json } from "@/lib/api";
+import { get, type Json } from "@/lib/api";
+import { downloadCounties } from "@/lib/downloads";
 import { compact, fmtValue, num, pct, usd } from "@/lib/format";
 
 type Row = Record<string, number | string | boolean | null>;
@@ -53,7 +55,7 @@ function CountyPanel({ fips, onClose }: { fips: string; onClose: () => void }) {
         <div className="mb-1 text-xs font-semibold">Nearest currently recruiting sites</div>
         <table className="w-full text-xs"><tbody>
           {data.nearest_recruiting_sites.slice(0, 5).map((s: Json) => (
-            <tr key={s.facility_id} className="border-t"><td className="py-1 pr-2"><Link className="text-blue-700 hover:underline" href={`/facilities/${s.facility_id}`}>{s.name || "Unnamed site"}</Link>{s.is_placeholder_name && <span className="text-muted-foreground"> (anonymised)</span>}
+            <tr key={s.facility_id} className="border-t"><td className="py-1 pr-2"><Link className="text-blue-700 hover:underline" href={`/facility?id=${s.facility_id}`}>{s.name || "Unnamed site"}</Link>{s.is_placeholder_name && <span className="text-muted-foreground"> (anonymised)</span>}
               <div className="text-muted-foreground">{s.city}, {s.usps} · {s.recruiting_studies} recruiting {s.recruiting_studies === 1 ? "study" : "studies"} · geocode {s.geocode_confidence}</div></td>
               <td className="whitespace-nowrap py-1 text-right align-top tabular-nums">{num(s.miles, 1)} mi</td></tr>))}
         </tbody></table>
@@ -82,6 +84,18 @@ export default function AccessPage() {
   const [minShare, setMinShare] = useState(50);
   const [showSites, setShowSites] = useState(false);
   const [sel, setSel] = useState<string | null>(null);
+  // ?county=FIPS deep links (search palette, shared links) open that county's profile
+  useEffect(() => {
+    const c = new URLSearchParams(window.location.search).get("county");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- read deep link once
+    if (c && /^\d{5}$/.test(c)) setSel(c);
+  }, []);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (sel) q.set("county", sel); else q.delete("county");
+    const s = q.toString();
+    window.history.replaceState(window.history.state, "", window.location.pathname + (s ? `?${s}` : ""));
+  }, [sel]);
   const key = `${category}|${state}|${threshold}|${minShare}`;
   const cty = useData<Json>(() => get("/api/access/counties", { category, state, threshold_mi: threshold, min_share: minShare }), key);
   const cmp = useData<Json>(() => get("/api/access/compare", { category, state, threshold_mi: threshold, min_share: minShare }), key);
@@ -101,6 +115,10 @@ export default function AccessPage() {
   return (
     <>
       <PageHeader title="Access Gap Explorer" lead="County-level distance to currently recruiting oncology trial sites, alongside the socioeconomic characteristics of the people who live there. Click a county for its profile." />
+      <Explainer>
+        <p>Each county is coloured by the measure you pick under <b>Map shows</b>. Darker means more: farther from trials, more residents out of reach, or a higher rate of poverty and so on.</p>
+        <p>An <Term k="gap">access-gap county</Term> is one where most residents are out of reach. Click a county (or a row in the list) to see its nearest recruiting sites and every census and health indicator, with its <Term k="moe">margin of error</Term>.</p>
+      </Explainer>
       <FilterBar>
         <label className="grid gap-1 text-xs text-muted-foreground">Map shows
           <select aria-label="Map metric" className={sel2} value={metricId} onChange={(e) => setMetricId(e.target.value)}>
@@ -109,10 +127,10 @@ export default function AccessPage() {
           <select aria-label="Gap definition" className={sel2} value={minShare} onChange={(e) => setMinShare(Number(e.target.value))}>
             {[10, 25, 50, 75, 90].map((v) => <option key={v} value={v}>{v}% of residents within threshold</option>)}</select></label>
         <label className="flex h-8 items-center gap-2 text-xs"><input type="checkbox" checked={showSites} onChange={(e) => setShowSites(e.target.checked)} /> Show recruiting sites</label>
-        <a data-testid="export-counties" className="ml-auto flex h-8 items-center rounded-md border px-3 text-xs font-medium hover:bg-muted"
-          href={`${API}/api/access/counties.csv${qs({ category, state, threshold_mi: threshold, min_share: minShare })}`}>Export county table (CSV)</a>
+        <button data-testid="export-counties" className="ml-auto flex h-8 items-center rounded-md border px-3 text-xs font-medium hover:bg-muted"
+          onClick={() => downloadCounties({ category, state, threshold_mi: threshold, min_share: minShare })}>Export county table (CSV)</button>
       </FilterBar>
-      <ErrorNote error={cty.error ?? cmp.error} />
+      <ErrorNote error={cty.error ?? cmp.error} onRetry={() => { cty.reload(); cmp.reload(); }} />
       {cty.data && (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Stat testId="stat-gap-counties" label="Access-gap counties" value={num(cty.data.n_gap_counties)} sub={`of ${num(cty.data.n_counties)} counties in scope`} source={`Calculation · ${cty.data.gap_definition}`} />

@@ -9,6 +9,8 @@ recruiting oncology trials. It surfaces the gaps that matter (early-phase desert
 where distance and poverty stack up) and lets planners test hypothetical sites with an explainable score
 whose robustness is tested.
 
+**Live demo:** _add your Netlify URL here after the first deploy_ ([how](#deploy)) · runs entirely in the browser, no sign-up.
+
 ![Insights](docs/screenshots/insights.png)
 
 > Population-level planning tool. No patient data, no individual eligibility, no claim that proximity
@@ -38,6 +40,11 @@ The narrative version is in [docs/CASE_STUDY.md](docs/CASE_STUDY.md).
 |---|---|
 | ![Overview](docs/screenshots/overview.png) **National Overview**: recruiting sites, status mix, coverage by county type, cancer type and sponsor | ![Access](docs/screenshots/access.png) **Access Gap Explorer**: county choropleths of distance or ACS/PLACES indicators, county profiles with margins of error, gap vs. non-gap comparison |
 | ![Simulator](docs/screenshots/simulator.png) **Site Strategy Simulator**: click to place hypothetical sites, multi-site plan builder, weighted ranking, 500-draw sensitivity analysis | ![Trial](docs/screenshots/trial.png) **Trial Explorer**: every number traces back to real NCT records, their sites, and the original registry page |
+
+It is built to be usable by people who are not analysts: a first-visit welcome, "How to read this page"
+explainers, glossary tooltips on every technical term, a **⌘K / `/` jump-to search** for any state, county,
+page or NCT number, one-click **Share view** links that reopen the exact filters, saved scenarios,
+retryable errors, keyboard navigation with visible focus, a skip link, and a phone-width layout.
 
 There is also an **Executive Brief** (generated findings, ranked opportunities, methodology, limitations;
 Markdown/CSV/PDF export), **facility profiles**, and a **Data & Methods** page (sources, hashes, freshness,
@@ -97,7 +104,33 @@ More: [Architecture](docs/ARCHITECTURE.md) · [Methodology](docs/METHODOLOGY.md)
 [Case study](docs/CASE_STUDY.md) · [Demo script](docs/DEMO_SCRIPT.md) ·
 [Implementation status](IMPLEMENTATION_STATUS.md)
 
-## Run it
+## Two editions, one codebase
+
+| | Live edition | Static edition |
+|---|---|---|
+| Data | FastAPI + PostGIS, refreshable pipeline | Frozen snapshot exported by `trialgraph export-static` |
+| Analysis | Python engine on the server | Same engine ported to TypeScript, runs in the browser |
+| Hosting | Docker Compose (API + DB + web) | Any static host: Netlify, GitHub Pages; no server, never sleeps |
+| Parity | reference | `frontend/e2e/parity.mjs` checks both show identical figures (coverage, gaps, rankings, plans) |
+
+The UI calls one data client (`frontend/lib/api.ts`). In the static edition the same requests are
+answered by `frontend/lib/static/` from about 160 MB of compact JSON and binary arrays (around 40 MB
+gzipped, loaded lazily per page). The Monte Carlo sensitivity uses a seeded JavaScript generator, so its
+draws differ from NumPy's while following the same distribution.
+
+## Deploy
+
+**Netlify (recommended, free).** Push this repo to GitHub, then in Netlify: *Add new site → Import an
+existing project → GitHub → TrialGraph → Deploy*. `netlify.toml` already sets the base directory, build
+command (`pnpm build:static`) and publish directory, so no settings need to change.
+
+**GitHub Pages (optional, free).** Repo *Settings → Pages → Source: GitHub Actions*. The
+`pages.yml` workflow then publishes the static edition on every push to `main`.
+
+**Refreshing the hosted data:** run `make pipeline && .tools/env/bin/trialgraph export-static`, commit
+`frontend/public/data`, push. Netlify and Pages rebuild automatically.
+
+## Run it locally
 
 **Docker Compose**
 
@@ -123,7 +156,7 @@ make web         # http://localhost:3010
 
 ```bash
 make test-unit   # 78 pytest tests: parsers, geodesy, scoring, lenses, insights, data validation, API
-make test-e2e    # 10 Playwright tests against the running app
+make test-e2e    # 12 Playwright tests (run against both editions; BASE_URL=... for the static build)
 make lint
 ```
 

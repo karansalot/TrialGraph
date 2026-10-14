@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ErrorNote, Loading, PageHeader, Panel, Stat, useData, Callout } from "@/components/bits";
+import { Explainer, Term, Welcome } from "@/components/ux";
 import { HBar } from "@/components/charts";
 import { FilterBar, useFilters } from "@/components/filters";
 import { CountyMap } from "@/components/map/county-map";
@@ -28,9 +29,14 @@ export default function Overview() {
     <>
       <PageHeader title="National Overview"
         lead={<>Where oncology trials are recruiting right now, and how much of the population lives near one. Every figure is computed from the public sources named beneath it.</>} />
+      <Welcome />
+      <Explainer>
+        <p>The tiles count trials and people for the filters you choose. A site only counts if it is <Term k="recruiting">recruiting right now</Term>; distances are <Term k="straight">straight-line</Term> from the population centre of each <Term k="tract">census tract</Term>.</p>
+        <p>Use the cancer-type table to compare how reachable different kinds of trials are, and click any orange dot on the map to see what that site is recruiting for.</p>
+      </Explainer>
       <FilterBar />
-      <ErrorNote error={ov.error} />
-      {!d ? <Loading h={420} /> : (
+      <ErrorNote error={ov.error} onRetry={ov.reload} />
+      {!d ? <Loading h={420} label="Crunching 84,414 neighbourhoods…" /> : (
         <>
           {ins.data && (
             <div className="grid gap-3 md:grid-cols-3" data-testid="insight-teasers">
@@ -38,7 +44,7 @@ export default function Overview() {
                 <Link key={i.id} href="/insights" className="group rounded-lg border bg-neutral-900 px-4 py-3 text-white hover:bg-neutral-800">
                   <div className="text-[11px] uppercase tracking-wide text-neutral-400">{i.theme} insight</div>
                   <div className="mt-1 text-sm font-medium">{i.title}</div>
-                  <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-semibold tabular-nums">{i.headline}</span><span className="text-xs text-neutral-300">{i.headline_label}</span></div>
+                  <div className="mt-1 flex items-baseline gap-2"><span className="whitespace-nowrap text-2xl font-semibold tabular-nums">{i.headline}</span><span className="text-xs text-neutral-300">{i.headline_label}</span></div>
                   <div className="mt-1 text-xs text-sky-300 group-hover:underline">All insights →</div>
                 </Link>))}
             </div>)}
@@ -60,7 +66,7 @@ export default function Overview() {
           <div className="grid gap-3 xl:grid-cols-[1fr_380px]">
             <Panel title={`Sites currently recruiting for interventional ${category === "all" ? "oncology" : categoryLabel.toLowerCase()} studies`}
               note={<>{meta?.analysis_site_definition} Points are ZIP-area or city centroids, not street addresses. Click a site for its profile. {fac.data ? `${num(fac.data.count)} facility records shown.` : ""}</>}>
-              <CountyMap facilities={fac.data?.facilities ?? null} state={state} height={470} onFacilityClick={(id) => router.push(`/facilities/${id}`)} />
+              <CountyMap facilities={fac.data?.facilities ?? null} state={state} height={470} onFacilityClick={(id) => router.push(`/facility?id=${id}`)} />
             </Panel>
             <div className="grid content-start gap-3">
               <Panel title="Registered studies by recruitment status"

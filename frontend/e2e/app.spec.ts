@@ -14,7 +14,7 @@ test("national overview shows real, sourced metrics and a data-freshness indicat
   await expect(page.getByTestId("stat-recruiting-studies")).toContainText("ClinicalTrials.gov");
   expect(await numberIn(page, "stat-recruiting-studies")).toBeGreaterThan(100);
   await expect(page.getByTestId("stat-coverage")).toContainText("straight-line");
-  await expect(page.getByTestId("freshness")).toContainText(/Trial data (fresh|stale)/);
+  await expect(page.getByTestId("freshness")).toContainText(/Trial data (fresh|stale)|Snapshot/);
   await expect(page.getByText("Registered studies by recruitment status")).toBeVisible();
   await expect(page.getByTestId("county-map")).toHaveAttribute("data-ready", "true");
   // never label straight-line distance as driving distance
@@ -54,7 +54,7 @@ test("trial explorer: search, status filter, drill-down and source link", async 
   await expect(first).toContainText("Recruiting");
   const nct = (await first.innerText()).match(/NCT\d{8}/)![0];
   await first.getByRole("link", { name: nct }).click();
-  await expect(page).toHaveURL(new RegExp(`/trials/${nct}`));
+  await expect(page).toHaveURL(new RegExp(`/trial/?\\?id=${nct}`));
   await expect(page.getByTestId("source-link")).toHaveAttribute("href", `https://clinicaltrials.gov/study/${nct}`);
   await expect(page.getByTestId("site-rows").locator("tr").first()).toBeVisible();
   await page.goto("/trials");
@@ -85,15 +85,16 @@ test("simulator: add a ranked candidate, see before/after, compare scenarios, ru
   await expect(page.getByTestId("sensitivity")).toContainText("Rank stability");
 });
 
-test("executive brief: findings, limitations and export; methods page lists sources", async ({ page, request }) => {
+test("executive brief: findings, limitations and export; methods page lists sources", async ({ page }) => {
   await page.goto("/brief");
   const brief = page.getByTestId("brief");
   await expect(brief).toContainText("Key findings");
   await expect(brief).toContainText("Limitations");
   await expect(brief).toContainText("Traceable to");
-  const href = await page.getByTestId("export-md").getAttribute("href");
-  const md = await (await request.get(href!)).text();
+  const [dl] = await Promise.all([page.waitForEvent("download"), page.getByTestId("export-md").click()]);
+  const md = await (await import("node:fs/promises")).readFile((await dl.path())!, "utf8");
   expect(md).toContain("## Ranked hypothetical site opportunities");
+  expect(md).toContain("straight-line");
   await page.goto("/methods");
   await expect(page.getByTestId("sources-table")).toContainText("ClinicalTrials.gov API v2");
   await expect(page.getByTestId("dictionary")).toContainText("acs_pct_poverty");
@@ -109,15 +110,18 @@ test("coverage by cancer type applies a filter, and the view is shareable by URL
   await page.goto("/access?category=lung&state=MT&threshold=100");
   await expect(page.getByLabel("Cancer type")).toHaveValue("lung");
   await expect(page.getByLabel("Region")).toHaveValue("MT");
-  await expect(page.getByLabel("Distance threshold")).toHaveValue("100");
-  await expect(page.getByTestId("export-counties")).toHaveAttribute("href", /counties\.csv\?category=lung&state=MT&threshold_mi=100/);
+  await expect(page.getByLabel("Distance threshold", { exact: true })).toHaveValue("100");
+  const [dl] = await Promise.all([page.waitForEvent("download"), page.getByTestId("export-counties").click()]);
+  const csv = await (await import("node:fs/promises")).readFile((await dl.path())!, "utf8");
+  expect(csv).toContain("category=lung; scope=MT; threshold_mi=100");
+  expect(csv.split("\n").filter((l) => l && !l.startsWith("#"))).toHaveLength(57);
 });
 
 test("facility profile is reachable from a trial and lists its studies", async ({ page }) => {
   await page.goto("/trials");
   await page.getByTestId("trial-rows").locator("tr").first().getByRole("link").first().click();
   await page.getByTestId("site-rows").locator("tr").first().getByRole("link").first().click();
-  await expect(page).toHaveURL(/\/facilities\/\d+/);
+  await expect(page).toHaveURL(/\/facility\/?\?id=\d+/);
   await expect(page.getByTestId("facility-name")).toBeVisible();
   await expect(page.getByTestId("facility-studies").locator("tr").first()).toContainText(/NCT\d{8}/);
   await expect(page.getByText("Location confidence")).toBeVisible();
@@ -140,8 +144,39 @@ test("insights page shows computed findings with deep links, and lenses are sele
   await expect(cards).toHaveCount(8);
   await expect(cards.first()).toContainText("Phase 1");
   await cards.first().getByRole("link", { name: "Explore this →" }).click();
-  await expect(page).toHaveURL(/\/access\?category=lens_phase1/);
+  await expect(page).toHaveURL(/\/access\/?\?category=lens_phase1/);
   await expect(page.getByLabel("Cancer type")).toHaveValue("lens_phase1");
   await page.goto("/");
   await expect(page.getByTestId("insight-teasers").locator("a")).toHaveCount(3);
+});
+
+test("usability: jump-to search, help panel with glossary, share link, welcome card", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+  await expect(page.getByTestId("welcome")).toBeVisible();
+  await page.keyboard.press("Control+k");
+  await page.getByTestId("palette-input").fill("Yuma");
+  await expect(page.getByTestId("palette-results")).toContainText("Yuma County, AZ");
+  await page.keyboard.press("ArrowDown");
+  await page.getByTestId("palette-results").getByText("Yuma County, AZ").click();
+  await expect(page).toHaveURL(/\/access\/?\?state=AZ&county=04027/);
+  await expect(page.getByTestId("county-panel")).toContainText("Yuma County");
+  await page.getByTestId("share").first().click();
+  await expect(page.getByText("Link copied")).toBeVisible();
+  await page.getByTestId("open-help").click();
+  await expect(page.getByRole("dialog", { name: "How to use TrialGraph" })).toContainText("Margin of error");
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "What is Distance threshold?" }).first().focus();
+  await expect(page.getByRole("tooltip")).toContainText("covered");
+});
+
+test("mobile layout: menu navigation works at phone width", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Menu" }).click();
+  await page.locator("#mobile-nav").getByRole("link", { name: "Insights" }).click();
+  await expect(page).toHaveURL(/\/insights/);
+  await expect(page.getByTestId("insight").first()).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
 });

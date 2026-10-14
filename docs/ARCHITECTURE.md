@@ -37,6 +37,17 @@ the documented deployment path.
    new site can only shorten a tract's distance, a scenario is `min(baseline, distance to new site)` -
    exact, and fast enough to recompute on every click (about 70 ms nationally).
 
+## Static edition
+
+`trialgraph export-static` writes the snapshot the browser needs into `frontend/public/data`: tract
+centres and per-filter baseline distances as Float32 binaries, county profiles, registry aggregates per
+filter and state, analysis-site lists, insights, a compact trial index, and sharded trial, facility and
+county detail. `frontend/lib/static/engine.ts` ports the access model (summaries, county tables,
+simulation, candidate scoring with a 1-degree grid index, greedy plans, sensitivity analysis), and
+`frontend/lib/static/router.ts` answers the same API paths with the same response shapes. Pages do not
+know which edition they run in. `next build` with `output: "export"` produces plain files for Netlify or
+GitHub Pages.
+
 ## Why these choices
 
 - **Tract-level population surface, county-level display.** Coverage is computed from 84,414 tract centres

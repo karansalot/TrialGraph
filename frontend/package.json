@@ -8,7 +8,9 @@
     "start": "next start -p 3010",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:static": "NEXT_PUBLIC_DATA_MODE=static NEXT_OUTPUT=export NEXT_DIST_DIR=out next build",
+    "serve:static": "npx --yes serve@14.2.4 out -l 3020"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
