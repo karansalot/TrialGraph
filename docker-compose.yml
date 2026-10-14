@@ -1,0 +1,63 @@
+# TrialGraph full stack.
+#   docker compose up -d db
+#   docker compose run --rm pipeline          # extract -> transform -> load -> analyze (~5 min, ~1 GB download)
+#   docker compose up -d api web              # http://localhost:3000  (API docs: http://localhost:8000/docs)
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: trialgraph
+      POSTGRES_PASSWORD: trialgraph
+      POSTGRES_DB: trialgraph
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trialgraph -d trialgraph"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  pipeline:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    profiles: ["pipeline"]
+    environment: &backend_env
+      TG_DATABASE_URL: postgresql+psycopg://trialgraph:trialgraph@db:5432/trialgraph
+      TG_DATA_DIR: /data
+      TG_PILOT_STATES: ${TG_PILOT_STATES:-}
+      TG_ACS_YEAR: ${TG_ACS_YEAR:-2024}
+      TG_OSRM_URL: ${TG_OSRM_URL:-}
+      TG_CORS_ORIGINS: http://localhost:3000
+    volumes:
+      - tgdata:/data
+    depends_on:
+      db: { condition: service_healthy }
+    command: ["trialgraph", "all"]
+
+  api:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    environment: *backend_env
+    volumes:
+      - tgdata:/data
+    depends_on:
+      db: { condition: service_healthy }
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      retries: 10
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    depends_on: [api]
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  tgdata:

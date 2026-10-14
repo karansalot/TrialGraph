@@ -1,0 +1,14 @@
+.tools/
+data/raw/
+data/staging/
+data/exports/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+node_modules/
+.next/
+frontend/test-results/
+frontend/playwright-report/
+*.egg-info/
+.DS_Store

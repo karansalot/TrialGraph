@@ -1,0 +1,36 @@
+# Scheduled data-freshness check. ClinicalTrials.gov changes daily; this job rebuilds the pilot
+# dataset weekly and fails loudly if a source contract has drifted (schema, endpoint or counts).
+name: Refresh data
+on:
+  schedule: [{ cron: "0 9 * * 1" }]
+  workflow_dispatch:
+    inputs:
+      pilot_states: { description: "USPS codes, comma separated (empty = national)", default: "MT,WY,ID" }
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgis/postgis:16-3.4
+        env: { POSTGRES_USER: trialgraph, POSTGRES_PASSWORD: trialgraph, POSTGRES_DB: trialgraph }
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U trialgraph" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      TG_DATABASE_URL: postgresql+psycopg://trialgraph:trialgraph@localhost:5433/trialgraph
+      TG_PILOT_STATES: ${{ github.event.inputs.pilot_states || 'MT,WY,ID' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e "backend[dev]"
+      - run: trialgraph all --refresh
+      - run: cd backend && pytest -q
+      - run: trialgraph freshness
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lineage
+          path: |
+            data/raw/manifest.json
+            data/staging/transform_summary.json

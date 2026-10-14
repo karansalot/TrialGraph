@@ -1,0 +1,1072 @@
+{
+ "_provenance": {
+  "source": "https://clinicaltrials.gov/api/v2/studies",
+  "retrieved_at": "2026-10-12T23:53:26+00:00",
+  "api_version": "2.0.5",
+  "note": "Verbatim API v2 records; each study's location list truncated to its first 8 entries."
+ },
+ "studies": [
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT03064867",
+     "briefTitle": "Venetoclax Plus R-ICE Chemotherapy for Relapsed/Refractory Diffuse Large B-Cell Lymphoma"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2022-11",
+     "overallStatus": "ACTIVE_NOT_RECRUITING",
+     "startDateStruct": {
+      "date": "2017-06-26"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2022-08-12"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2022-11-16"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "Molly Gallogly",
+      "class": "OTHER"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Diffuse Large B-cell-lymphoma"
+     ],
+     "keywords": [
+      "venetoclax",
+      "rituximab",
+      "ifosfamide",
+      "carboplatin",
+      "etoposide"
+     ]
+    },
+    "designModule": {
+     "studyType": "INTERVENTIONAL",
+     "phases": [
+      "PHASE1",
+      "PHASE2"
+     ],
+     "enrollmentInfo": {
+      "count": 65,
+      "type": "ACTUAL"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "DRUG",
+       "name": "Venetoclax"
+      },
+      {
+       "type": "DRUG",
+       "name": "Rituximab"
+      },
+      {
+       "type": "DRUG",
+       "name": "Ifosfamide"
+      },
+      {
+       "type": "DRUG",
+       "name": "Carboplatin"
+      },
+      {
+       "type": "DRUG",
+       "name": "Etoposide"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "ALL",
+     "minimumAge": "18 Years",
+     "stdAges": [
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "Washington University School of Medicine, Siteman Cancer Center",
+       "city": "St Louis",
+       "state": "Missouri",
+       "zip": "63110",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 38.62727,
+        "lon": -90.19789
+       }
+      },
+      {
+       "facility": "University Hospitals Cleveland Medical Center, Case Comprehensive Cancer Center",
+       "city": "Cleveland",
+       "state": "Ohio",
+       "zip": "44106-5065",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 41.4995,
+        "lon": -81.69541
+       }
+      },
+      {
+       "facility": "Cleveland Clinic Taussig Cancer Institute, Case Comprehensive Cancer Center",
+       "city": "Cleveland",
+       "state": "Ohio",
+       "zip": "44195",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 41.4995,
+        "lon": -81.69541
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {
+    "conditionBrowseModule": {
+     "meshes": [
+      {
+       "term": "Dendritic Cell Sarcoma, Interdigitating"
+      }
+     ],
+     "ancestors": [
+      {
+       "term": "Histiocytic Disorders, Malignant"
+      },
+      {
+       "term": "Neoplasms by Histologic Type"
+      },
+      {
+       "term": "Neoplasms"
+      },
+      {
+       "term": "Histiocytosis"
+      },
+      {
+       "term": "Lymphatic Diseases"
+      },
+      {
+       "term": "Hemic and Lymphatic Diseases"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT07698314",
+     "briefTitle": "A Pilot Study Assessing Myokines During an EXErcise Regimen After Treatment for Breast Cancer"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2026-09",
+     "overallStatus": "RECRUITING",
+     "startDateStruct": {
+      "date": "2026-07-06"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2027-07"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2026-09-30"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "Allegheny Singer Research Institute (also known as Allegheny Health Network Research Institute)",
+      "class": "OTHER"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Cancer",
+      "Breast Cancer"
+     ]
+    },
+    "designModule": {
+     "studyType": "INTERVENTIONAL",
+     "phases": [
+      "NA"
+     ],
+     "enrollmentInfo": {
+      "count": 21,
+      "type": "ESTIMATED"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "BEHAVIORAL",
+       "name": "Conditioning Resistance Training"
+      },
+      {
+       "type": "BEHAVIORAL",
+       "name": "Strength Resistance Training"
+      },
+      {
+       "type": "BEHAVIORAL",
+       "name": "Hypertrophy Resistance Training"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "FEMALE",
+     "minimumAge": "20 Years",
+     "maximumAge": "89 Years",
+     "stdAges": [
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "AHN Allegheny General Hospital",
+       "status": "NOT_YET_RECRUITING",
+       "city": "Pittsburgh",
+       "state": "Pennsylvania",
+       "zip": "15212",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 40.44062,
+        "lon": -79.99589
+       }
+      },
+      {
+       "facility": "Allegheny General Hospital",
+       "status": "RECRUITING",
+       "city": "Pittsburgh",
+       "state": "Pennsylvania",
+       "zip": "15212",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 40.44062,
+        "lon": -79.99589
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {
+    "conditionBrowseModule": {
+     "meshes": [
+      {
+       "term": "Neoplasms"
+      },
+      {
+       "term": "Breast Neoplasms"
+      }
+     ],
+     "ancestors": [
+      {
+       "term": "Neoplasms by Site"
+      },
+      {
+       "term": "Breast Diseases"
+      },
+      {
+       "term": "Skin Diseases"
+      },
+      {
+       "term": "Skin and Connective Tissue Diseases"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT05419375",
+     "briefTitle": "Screening Study for Participants With Malignant Tumors"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2026-02",
+     "overallStatus": "COMPLETED",
+     "startDateStruct": {
+      "date": "2022-07-22"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2025-09-03"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2026-02-03"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "Hoffmann-La Roche",
+      "class": "INDUSTRY"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Solid Tumors"
+     ]
+    },
+    "designModule": {
+     "studyType": "INTERVENTIONAL",
+     "phases": [
+      "PHASE2"
+     ],
+     "enrollmentInfo": {
+      "count": 470,
+      "type": "ACTUAL"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "OTHER",
+       "name": "Screening platform"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "ALL",
+     "minimumAge": "18 Years",
+     "stdAges": [
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "Thompson Cancer Survival Center",
+       "city": "Knoxville",
+       "state": "Tennessee",
+       "zip": "37916-2305",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 35.96064,
+        "lon": -83.92074
+       }
+      },
+      {
+       "facility": "Texas Oncology, P.A.",
+       "city": "Austin",
+       "state": "Texas",
+       "zip": "78745",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 30.26715,
+        "lon": -97.74306
+       }
+      },
+      {
+       "facility": "Texas Oncology- Northeast Texas",
+       "city": "Tyler",
+       "state": "Texas",
+       "zip": "75702",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 32.35126,
+        "lon": -95.30106
+       }
+      },
+      {
+       "facility": "Oncology & Hematology Associates of Southwest Virginia, Inc",
+       "city": "Blacksburg",
+       "state": "Virginia",
+       "zip": "24060",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 37.22957,
+        "lon": -80.41394
+       }
+      },
+      {
+       "facility": "Northwest Cancer Specialists",
+       "city": "Vancouver",
+       "state": "Washington",
+       "zip": "98686",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 45.63873,
+        "lon": -122.66149
+       }
+      },
+      {
+       "facility": "One Clinical Research",
+       "city": "Nedlands",
+       "state": "Western Australia",
+       "zip": "6009",
+       "country": "Australia",
+       "geoPoint": {
+        "lat": -31.98184,
+        "lon": 115.8073
+       }
+      },
+      {
+       "facility": "COT - Centro Oncologico do Triangulo",
+       "city": "Uberl\u00e2ndia",
+       "state": "Minas Gerais",
+       "zip": "38408-150",
+       "country": "Brazil",
+       "geoPoint": {
+        "lat": -18.91861,
+        "lon": -48.27722
+       }
+      },
+      {
+       "facility": "Santa Casa de Misericordia de Porto Alegre",
+       "city": "Porto Alegre",
+       "state": "Rio Grande do Sul",
+       "zip": "90050-170",
+       "country": "Brazil",
+       "geoPoint": {
+        "lat": -30.03283,
+        "lon": -51.23019
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {}
+  },
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT02701244",
+     "briefTitle": "A Registry Study of Breast Microseed Treatment"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2018-03",
+     "overallStatus": "UNKNOWN",
+     "startDateStruct": {
+      "date": "2016-07"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2021-07"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2018-03-19"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "Concure Oncology-Breast Microseed Inc.",
+      "class": "INDUSTRY"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Breast Neoplasms"
+     ],
+     "keywords": [
+      "Infiltrating Ductal Carcinoma",
+      "Ductal Carcinoma In Situ",
+      "Brachytherapy",
+      "Breast Neoplasms",
+      "Breast Diseases",
+      "Neoplasms",
+      "Neoplasms by Site"
+     ]
+    },
+    "designModule": {
+     "studyType": "OBSERVATIONAL",
+     "enrollmentInfo": {
+      "count": 420,
+      "type": "ESTIMATED"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "RADIATION",
+       "name": "Permanent Breast Seed Implant (PBSI)"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "FEMALE",
+     "minimumAge": "50 Years",
+     "stdAges": [
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "Allegheny General Hospital",
+       "status": "RECRUITING",
+       "city": "Pittsburgh",
+       "state": "Pennsylvania",
+       "zip": "15212",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 40.44062,
+        "lon": -79.99589
+       }
+      },
+      {
+       "facility": "Mary Washington Hospital",
+       "status": "RECRUITING",
+       "city": "Fredericksburg",
+       "state": "Virginia",
+       "zip": "22401",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 38.30318,
+        "lon": -77.46054
+       }
+      },
+      {
+       "facility": "Swedish Cancer Institute",
+       "status": "RECRUITING",
+       "city": "Seattle",
+       "state": "Washington",
+       "zip": "98104",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 47.60621,
+        "lon": -122.33207
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {
+    "conditionBrowseModule": {
+     "meshes": [
+      {
+       "term": "Breast Neoplasms"
+      },
+      {
+       "term": "Carcinoma, Intraductal, Noninfiltrating"
+      },
+      {
+       "term": "Breast Diseases"
+      },
+      {
+       "term": "Neoplasms"
+      },
+      {
+       "term": "Neoplasms by Site"
+      }
+     ],
+     "ancestors": [
+      {
+       "term": "Skin Diseases"
+      },
+      {
+       "term": "Skin and Connective Tissue Diseases"
+      },
+      {
+       "term": "Adenocarcinoma"
+      },
+      {
+       "term": "Carcinoma"
+      },
+      {
+       "term": "Neoplasms, Glandular and Epithelial"
+      },
+      {
+       "term": "Neoplasms by Histologic Type"
+      },
+      {
+       "term": "Breast Carcinoma In Situ"
+      },
+      {
+       "term": "Carcinoma in Situ"
+      },
+      {
+       "term": "Neoplasms, Ductal, Lobular, and Medullary"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT03394365",
+     "briefTitle": "A Phase 3 Study of Tabelecleucel for Participants With Epstein-Barr Virus-Associated Post-Transplant Lymphoproliferative Disease After Failure With Rituximab or Rituximab and Chemotherapy"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2026-08",
+     "overallStatus": "RECRUITING",
+     "startDateStruct": {
+      "date": "2017-12-29"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2030-05-31"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2026-09-02"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "Pierre Fabre Medicament",
+      "class": "INDUSTRY"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Epstein-Barr Virus+ Associated Post-transplant Lymphoproliferative Disease (EBV+ PTLD)",
+      "Solid Organ Transplant Complications",
+      "Lymphoproliferative Disorders",
+      "Allogeneic Hematopoietic Cell Transplant",
+      "Stem Cell Transplant Complications"
+     ],
+     "keywords": [
+      "Epstein-Barr Virus (EBV)-associated Lymphoproliferative Disease (LPD)",
+      "Epstein-Barr Virus (EBV)",
+      "Cytotoxic T lymphocyte (CTL)",
+      "Cancer After Transplant",
+      "Kidney transplant",
+      "Renal transplant",
+      "Liver transplant",
+      "Heart transplant",
+      "Lung transplant",
+      "Intestinal transplant",
+      "Pancreas transplant",
+      "Post-transplant Lymphoma",
+      "Solid Organ Transplant (SOT)",
+      "Bone Marrow Transplant Complications",
+      "Epstein-Barr Virus-specific Cytotoxic T Lymphocytes (EBV-CTL)",
+      "Hematopoietic Cell Transplant (HCT)",
+      "Hematopoietic Stem Cell Transplantation (HSCT)",
+      "Allogeneic Hematopoietic Cell Transplant",
+      "Allogeneic, Off-The-Shelf T-cell Immunotherapy"
+     ]
+    },
+    "designModule": {
+     "studyType": "INTERVENTIONAL",
+     "phases": [
+      "PHASE3"
+     ],
+     "enrollmentInfo": {
+      "count": 115,
+      "type": "ESTIMATED"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "BIOLOGICAL",
+       "name": "tabelecleucel"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "ALL",
+     "stdAges": [
+      "CHILD",
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "City of Hope (Adults and Pediatrics)",
+       "status": "COMPLETED",
+       "city": "Duarte",
+       "state": "California",
+       "zip": "91010",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 34.13945,
+        "lon": -117.97729
+       }
+      },
+      {
+       "facility": "University of California San Diego Moores Cancer Center (Adults only)",
+       "status": "COMPLETED",
+       "city": "La Jolla",
+       "state": "California",
+       "zip": "92093",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 32.84727,
+        "lon": -117.2742
+       }
+      },
+      {
+       "facility": "Loma Linda University Medical Center (Adults only)",
+       "status": "RECRUITING",
+       "city": "Loma Linda",
+       "state": "California",
+       "zip": "92354",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 34.04835,
+        "lon": -117.26115
+       }
+      },
+      {
+       "facility": "Children's Hospital Los Angeles, Div. of Research Immunology/BMT (Adults and Pediatrics)",
+       "status": "RECRUITING",
+       "city": "Los Angeles",
+       "state": "California",
+       "zip": "90027",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 34.05223,
+        "lon": -118.24368
+       }
+      },
+      {
+       "facility": "UCLA Medical Center (Adults and Pediatrics)",
+       "status": "COMPLETED",
+       "city": "Los Angeles",
+       "state": "California",
+       "zip": "90095",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 34.05223,
+        "lon": -118.24368
+       }
+      },
+      {
+       "facility": "University of California Davis Comprehensive Cancer Center (Adults only)",
+       "status": "COMPLETED",
+       "city": "Sacramento",
+       "state": "California",
+       "zip": "95817",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 38.58157,
+        "lon": -121.4944
+       }
+      },
+      {
+       "facility": "Yale University (Adults and Pediatrics)",
+       "status": "COMPLETED",
+       "city": "New Haven",
+       "state": "Connecticut",
+       "zip": "06519",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 41.30815,
+        "lon": -72.92816
+       }
+      },
+      {
+       "facility": "MedStar Georgetown University Hospital (Adults and Pediatrics)",
+       "status": "RECRUITING",
+       "city": "Washington D.C.",
+       "state": "District of Columbia",
+       "zip": "20007",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 38.89511,
+        "lon": -77.03637
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {
+    "conditionBrowseModule": {
+     "meshes": [
+      {
+       "term": "Lymphoproliferative Disorders"
+      },
+      {
+       "term": "Epstein-Barr Virus Infections"
+      }
+     ],
+     "ancestors": [
+      {
+       "term": "Lymphatic Diseases"
+      },
+      {
+       "term": "Hemic and Lymphatic Diseases"
+      },
+      {
+       "term": "Immunoproliferative Disorders"
+      },
+      {
+       "term": "Immune System Diseases"
+      },
+      {
+       "term": "Herpesviridae Infections"
+      },
+      {
+       "term": "DNA Virus Infections"
+      },
+      {
+       "term": "Virus Diseases"
+      },
+      {
+       "term": "Infections"
+      },
+      {
+       "term": "Tumor Virus Infections"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT07618520",
+     "briefTitle": "Expanding Genetic Access for Prostate Cancer Survivors"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2026-05",
+     "overallStatus": "NOT_YET_RECRUITING",
+     "startDateStruct": {
+      "date": "2026-08-01"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2029-07-30"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2026-06-01"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "Georgetown University",
+      "class": "OTHER"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Prostate Cancer Patients",
+      "Hereditary Cancer",
+      "Genetic Testing"
+     ],
+     "keywords": [
+      "Prostate cancer",
+      "survivorship",
+      "genetic counseling",
+      "genetic testing",
+      "hereditary cancer",
+      "Chatbot"
+     ]
+    },
+    "designModule": {
+     "studyType": "INTERVENTIONAL",
+     "phases": [
+      "NA"
+     ],
+     "enrollmentInfo": {
+      "count": 500,
+      "type": "ESTIMATED"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "BEHAVIORAL",
+       "name": "Print Genetic Education Guide"
+      },
+      {
+       "type": "BEHAVIORAL",
+       "name": "Digital Guide Genetic Education Guide"
+      },
+      {
+       "type": "BEHAVIORAL",
+       "name": "Enhanced Usual Care"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "MALE",
+     "minimumAge": "18 Years",
+     "maximumAge": "80 Years",
+     "stdAges": [
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "Georgetown University Medical Center/Lombardi Comprehensive Cancer Center",
+       "city": "Washington D.C.",
+       "state": "District of Columbia",
+       "zip": "20007",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 38.89511,
+        "lon": -77.03637
+       }
+      },
+      {
+       "facility": "Rutgers University/Rutgers Cancer Institute",
+       "city": "New Brunswick",
+       "state": "New Jersey",
+       "zip": "08903",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 40.48622,
+        "lon": -74.45182
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {
+    "conditionBrowseModule": {
+     "meshes": [
+      {
+       "term": "Prostatic Neoplasms"
+      }
+     ],
+     "ancestors": [
+      {
+       "term": "Genital Neoplasms, Male"
+      },
+      {
+       "term": "Urogenital Neoplasms"
+      },
+      {
+       "term": "Neoplasms by Site"
+      },
+      {
+       "term": "Neoplasms"
+      },
+      {
+       "term": "Genital Diseases, Male"
+      },
+      {
+       "term": "Genital Diseases"
+      },
+      {
+       "term": "Urogenital Diseases"
+      },
+      {
+       "term": "Prostatic Diseases"
+      },
+      {
+       "term": "Male Urogenital Diseases"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT07053813",
+     "briefTitle": "Applying Population Management Best Practices to Preventative Genomic Medicine Trial"
+    },
+    "statusModule": {
+     "statusVerifiedDate": "2025-06",
+     "overallStatus": "ENROLLING_BY_INVITATION",
+     "startDateStruct": {
+      "date": "2025-07-01"
+     },
+     "primaryCompletionDateStruct": {
+      "date": "2027-07-01"
+     },
+     "lastUpdatePostDateStruct": {
+      "date": "2026-02-27"
+     }
+    },
+    "sponsorCollaboratorsModule": {
+     "leadSponsor": {
+      "name": "University of Washington",
+      "class": "OTHER"
+     }
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Neoplastic Syndromes, Hereditary"
+     ],
+     "keywords": [
+      "hereditary cancer syndrome",
+      "pragmatic trial",
+      "population management",
+      "care coordination"
+     ]
+    },
+    "designModule": {
+     "studyType": "INTERVENTIONAL",
+     "phases": [
+      "NA"
+     ],
+     "enrollmentInfo": {
+      "count": 900,
+      "type": "ESTIMATED"
+     }
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "type": "BEHAVIORAL",
+       "name": "Web resources"
+      },
+      {
+       "type": "BEHAVIORAL",
+       "name": "Personalized outreach"
+      }
+     ]
+    },
+    "eligibilityModule": {
+     "healthyVolunteers": false,
+     "sex": "ALL",
+     "minimumAge": "18 Years",
+     "maximumAge": "75 Years",
+     "stdAges": [
+      "ADULT",
+      "OLDER_ADULT"
+     ]
+    },
+    "contactsLocationsModule": {
+     "locations": [
+      {
+       "facility": "Denver Health",
+       "city": "Denver",
+       "state": "Colorado",
+       "zip": "80204",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 39.73915,
+        "lon": -104.9847
+       }
+      },
+      {
+       "facility": "Kaiser Northwest",
+       "city": "Portland",
+       "state": "Oregon",
+       "zip": "97227",
+       "country": "United States",
+       "geoPoint": {
+        "lat": 45.52345,
+        "lon": -122.67621
+       }
+      }
+     ]
+    }
+   },
+   "derivedSection": {
+    "conditionBrowseModule": {
+     "meshes": [
+      {
+       "term": "Neoplastic Syndromes, Hereditary"
+      }
+     ],
+     "ancestors": [
+      {
+       "term": "Neoplasms"
+      },
+      {
+       "term": "Genetic Diseases, Inborn"
+      },
+      {
+       "term": "Congenital, Hereditary, and Neonatal Diseases and Abnormalities"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

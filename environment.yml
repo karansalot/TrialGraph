@@ -1,0 +1,11 @@
+# Project-local toolchain for running TrialGraph WITHOUT Docker.
+# Create with:  ./scripts/dev_env.sh   (wraps micromamba; installs into .tools/env)
+# Docker users do not need this file - see docker-compose.yml.
+name: trialgraph
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - postgresql
+  - postgis>=3.6
+  - pip
