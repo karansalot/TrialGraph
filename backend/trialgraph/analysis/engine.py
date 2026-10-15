@@ -19,7 +19,7 @@ from scipy.spatial import cKDTree
 from scipy.stats import rankdata, spearmanr
 from sqlalchemy import text
 
-from ..db import get_engine
+from ..db import get_read_engine
 from . import scoring as S
 from .access import CATEGORIES
 from .distance import chord_to_miles, miles_to_chord, to_unit_xyz
@@ -62,7 +62,7 @@ class Scope:
 
 class AccessModel:
     def __init__(self) -> None:
-        eng = get_engine()
+        eng = get_read_engine()
         with eng.connect() as conn:
             self.run_id = conn.execute(text("SELECT max(run_id) FROM pipeline_run")).scalar()
             self.counties = pd.read_sql(text("SELECT * FROM county_profile ORDER BY fips"), conn)
@@ -96,7 +96,7 @@ class AccessModel:
             raise KeyError(category)
         with self._lock:
             if category not in self._baseline:
-                with get_engine().connect() as conn:
+                with get_read_engine().connect() as conn:
                     df = pd.read_sql(text("SELECT geoid, nearest_mi FROM tract_access WHERE category = :c ORDER BY geoid"),
                                      conn, params={"c": category})
                 if not df.geoid.equals(self.tracts.geoid):
@@ -376,7 +376,7 @@ def get_model() -> AccessModel:
     """Process-wide singleton, rebuilt automatically after a new pipeline run."""
     global _model
     with _model_lock:
-        with get_engine().connect() as conn:
+        with get_read_engine().connect() as conn:
             run_id = conn.execute(text("SELECT max(run_id) FROM pipeline_run")).scalar()
         if _model is None or _model.run_id != run_id:
             _model = AccessModel()

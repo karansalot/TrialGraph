@@ -12,6 +12,8 @@ case "${1:-start}" in
       "$BIN/pg_ctl" -D "$PGDATA" -l "$ROOT/.tools/pg.log" -o "-p $PORT -c listen_addresses=localhost" -w start >/dev/null
     "$BIN/psql" -p "$PORT" -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='trialgraph'" | grep -q 1 || \
       "$BIN/psql" -p "$PORT" -U postgres -qc "CREATE ROLE trialgraph LOGIN SUPERUSER PASSWORD 'trialgraph'"
+    "$BIN/psql" -p "$PORT" -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='trialgraph_ro'" | grep -q 1 || \
+      "$BIN/psql" -p "$PORT" -U postgres -qc "CREATE ROLE trialgraph_ro LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD 'trialgraph_ro'"
     for db in trialgraph trialgraph_test; do
       "$BIN/psql" -p "$PORT" -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$db'" | grep -q 1 || \
         "$BIN/createdb" -p "$PORT" -U postgres -O trialgraph "$db"

@@ -1,0 +1,17 @@
+# Keep the Docker build context to what the images actually need.
+.git
+.github
+.tools
+data
+docs
+node_modules
+**/node_modules
+frontend
+**/.next
+**/out
+**/__pycache__
+**/*.pyc
+.env
+.env.*
+!.env.example
+*.log

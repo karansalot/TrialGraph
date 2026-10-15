@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm prepare:map && next dev -p 3010",
+    "dev": "pnpm prepare:map && next dev -H 127.0.0.1 -p 3010",
     "build": "pnpm prepare:map && next build",
     "start": "next start -p 3010",
     "lint": "eslint",

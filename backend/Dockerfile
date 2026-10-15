@@ -3,8 +3,7 @@ ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app/backend
 COPY backend/pyproject.toml ./
 COPY backend/trialgraph ./trialgraph
-RUN pip install -e ".[dev]"
-COPY backend/tests ./tests
+RUN pip install -e .
 RUN useradd --create-home --uid 10001 app && mkdir -p /data && chown -R app /data /app
 USER app
 EXPOSE 8000

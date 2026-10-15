@@ -71,6 +71,13 @@ def _json_list(col: pd.Series) -> pd.Series:
     return col.map(lambda v: json.dumps([str(x) for x in v]) if v is not None and len(v) else "[]")
 
 
+def grant_read_only(role: str = "trialgraph_ro") -> None:
+    """Give the API's read-only role SELECT on everything (idempotent; skipped when the role does not exist)."""
+    with get_engine().begin() as conn:
+        if conn.execute(text("SELECT 1 FROM pg_roles WHERE rolname = :r"), {"r": role}).scalar():
+            conn.execute(text(f"GRANT USAGE ON SCHEMA public TO {role}; GRANT SELECT ON ALL TABLES IN SCHEMA public TO {role}"))
+
+
 def load_all() -> dict:
     s = get_settings()
     st = s.staging_dir
@@ -254,4 +261,5 @@ def load_all() -> dict:
                      dict(s=started, scope=",".join(s.pilot_state_list) or "national", j=json.dumps(summary)))
     with eng.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
         conn.execute(text("ANALYZE"))
+    grant_read_only()
     return summary

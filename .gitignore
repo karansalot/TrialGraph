@@ -5,7 +5,22 @@ data/exports/
 __pycache__/
 *.pyc
 .pytest_cache/
+# secrets and credentials - never commit
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+credentials*.json
+service-account*.json
+*.log
+*.sqlite
+*.sqlite3
+.claude/
 node_modules/
 .next/
 frontend/test-results/

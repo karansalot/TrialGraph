@@ -92,20 +92,25 @@ _insights_cache: dict = {}
 
 @app.get("/api/insights", tags=["insights"])
 def insights(threshold_mi: float = Query(50, ge=5, le=250)):
-    """Auto-generated, data-driven findings with evidence and deep links."""
+    """Auto-generated, data-driven findings with evidence and deep links.
+
+    The threshold is snapped to the nearest of the standard values so arbitrary inputs cannot force a fresh
+    (expensive) computation each time."""
+    threshold_mi = min((25.0, 50.0, 75.0, 100.0, 150.0, 250.0), key=lambda t: abs(t - threshold_mi))
     from ..analysis import insights as I
     from ..analysis.engine import get_model
     m = get_model()
     key = (m.run_id, float(threshold_mi))
     if key not in _insights_cache:
-        _insights_cache.clear()
+        if len(_insights_cache) > 12:
+            _insights_cache.clear()
         _insights_cache[key] = I.build(m, float(threshold_mi))
     return _insights_cache[key]
 
 
 @app.get("/api/meta/freshness", tags=["meta"])
 def freshness(live: bool = Query(False, description="Also ask ClinicalTrials.gov whether newer data exists")):
-    return freshness_report(live=live)
+    return freshness_report(live=live)  # the upstream probe is cached for 10 minutes inside freshness_report
 
 
 @app.get("/api/meta/indicators", tags=["meta"])

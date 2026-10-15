@@ -1,6 +1,7 @@
 """Data freshness: how old is each source snapshot, and is it past its expected refresh window?"""
 from __future__ import annotations
 
+import time
 from datetime import datetime, timezone
 
 from ..config import get_settings
@@ -8,6 +9,9 @@ from ..db import fetch_all, fetch_one
 
 # Expected refresh cadence per source family (days before a snapshot is flagged stale).
 CADENCE = {"ctgov_studies": None, "cdc_places_county": 400, "acs5_": 400, "census_": 1200, "usda_": 1200}
+
+
+_live_cache: dict[str, tuple[float, dict]] = {}
 
 
 def _stale_after(key: str) -> int:
@@ -36,6 +40,10 @@ def freshness_report(live: bool = False) -> dict:
     if live:  # optional upstream probe: has ClinicalTrials.gov published newer data than our snapshot?
         from ..sources.ctgov import BASE
         from ..sources.fetch import client
+        hit = _live_cache.get("probe")
+        if hit and time.monotonic() - hit[0] < 600:   # at most one outbound request per 10 minutes, however many visitors ask
+            rep["ctgov_live"] = hit[1]
+            return rep
         try:
             with client() as c:
                 v = c.get(f"{BASE}/version", timeout=10).json()
@@ -43,5 +51,7 @@ def freshness_report(live: bool = False) -> dict:
             rep["ctgov_live"] = {"upstream_data_timestamp": v.get("dataTimestamp"), "snapshot_data_timestamp": ours,
                                  "newer_data_available": bool(ours) and v.get("dataTimestamp", "") > ours.strftime("%Y-%m-%dT%H:%M:%S")}
         except Exception as e:  # network failure must not break the report
-            rep["ctgov_live"] = {"error": str(e)}
+            rep["ctgov_live"] = {"error": "upstream check unavailable"}
+            _ = e
+        _live_cache["probe"] = (time.monotonic(), rep["ctgov_live"])
     return rep

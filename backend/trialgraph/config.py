@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="TG_", env_file=REPO_ROOT / ".env", extra="ignore")
 
     database_url: str = "postgresql+psycopg://trialgraph:trialgraph@localhost:5433/trialgraph"
+    # Optional least-privilege connection for the API (read-only role). Falls back to database_url.
+    api_database_url: str = ""
     data_dir: Path = REPO_ROOT / "data"
     acs_year: int = 2024
     boundary_year: int = 2023
