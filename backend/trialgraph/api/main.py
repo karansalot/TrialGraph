@@ -1,8 +1,14 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, Query
+import os
+import threading
+
+import psycopg
+from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import DBAPIError
 
 from ..analysis import scoring as S
 from ..analysis.access import CATEGORIES
@@ -20,8 +26,39 @@ app = FastAPI(
     description="Population-level geographic access to recruiting oncology clinical trials. "
                 "Not for individual eligibility or care decisions.",
 )
+_HEAVY = ("/api/simulator/", "/api/insights", "/api/brief")
+_heavy_slots = threading.BoundedSemaphore(int(os.environ.get("TG_MAX_HEAVY_REQUESTS", "4")))
+
+
+@app.exception_handler(DBAPIError)
+async def database_error(_request: Request, exc: DBAPIError):
+    """Never leak SQL or driver internals. Bad input the database rejects is a 422; anything else is a generic 500."""
+    if isinstance(exc.orig, (psycopg.errors.DataError, psycopg.errors.InvalidTextRepresentation)):
+        return JSONResponse({"detail": "Invalid input value."}, status_code=422)
+    return JSONResponse({"detail": "Internal error."}, status_code=500)
+
+
+@app.middleware("http")
+async def security_and_load_guard(request: Request, call_next):
+    """Defence in depth for a public deployment: security headers on every response, and a cap on concurrent
+    CPU-heavy requests (simulation, sensitivity, insights, brief) so a burst cannot exhaust the server."""
+    heavy = request.url.path.startswith(_HEAVY)
+    if heavy and not _heavy_slots.acquire(blocking=False):
+        return JSONResponse({"detail": "Server is busy with other analyses; please retry in a moment."}, status_code=429,
+                            headers={"Retry-After": "2"})
+    try:
+        response = await call_next(request)
+    finally:
+        if heavy:
+            _heavy_slots.release()
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("Cross-Origin-Resource-Policy", "same-site")
+    return response
+
+
 app.add_middleware(GZipMiddleware, minimum_size=1024)
-app.add_middleware(CORSMiddleware, allow_origins=get_settings().cors_origins.split(","), allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=get_settings().cors_origins.split(","), allow_methods=["GET", "POST"], allow_headers=["content-type"])
 for r in (trials.router, access.router, simulator.router, brief.router):
     app.include_router(r)
 

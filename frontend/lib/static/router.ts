@@ -21,7 +21,13 @@ const cols = (j: { columns: string[]; rows: any[][] }) => j.rows.map((r) => Obje
 
 async function meta() { return json("meta/meta.json"); }
 async function checkCat(cat: string) { const m = await meta(); if (!m.categories.some((c: any) => c.id === cat)) throw new HttpError(422, `unknown category '${cat}'`); }
-function stateOf(s?: string | null) { return s && s !== "US" ? s.toUpperCase() : null; }
+const STATES = new Set("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" "));
+function stateOf(s?: string | null) {
+  if (!s || s === "US") return null;
+  const u = String(s).toUpperCase();
+  if (!STATES.has(u)) throw new HttpError(422, `unknown state '${s}'`);  // also keeps user input out of data-file paths
+  return u;
+}
 function hyp(): Promise<string> { return json("meta/brief_text.json").then((b) => b.disclaimer); }
 
 // --------------------------------------------------------------------------- handlers

@@ -1,8 +1,8 @@
 "use client";
-import maplibregl from "maplibre-gl";
-import type { ExpressionSpecification, GeoJSONSource, Map as MlMap } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { ExpressionSpecification, GeoJSONSource, MapLayerMouseEvent, Map as MlMap } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
-import { geoUrl } from "@/lib/api";
+import { BASE_PATH, geoUrl } from "@/lib/api";
 import { SEQ } from "@/lib/format";
 
 export interface MapFacility { id: number; lat: number; lon: number; n: number; name: string | null; city: string | null; usps: string; anon?: boolean }
@@ -26,6 +26,20 @@ interface Props {
 }
 
 const NO_DATA = "#efeeea";
+maplibregl.setWorkerUrl(`${BASE_PATH}/maplibre/maplibre-gl-worker.mjs`);
+
+/** Popup content is built from DOM nodes with textContent: registry text (facility names etc.) is untrusted and never parsed as HTML. */
+function popupNode(lines: { text: string; bold?: boolean }[]): HTMLElement {
+  const d = document.createElement("div");
+  d.style.cssText = "font:12px/1.35 system-ui";
+  lines.forEach((l, i) => {
+    if (i) d.appendChild(document.createElement("br"));
+    const el = document.createElement(l.bold ? "b" : "span");
+    el.textContent = l.text;
+    d.appendChild(el);
+  });
+  return d;
+}
 const CONUS: [[number, number], [number, number]] = [[-125, 24], [-66.5, 49.6]];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cache: Record<string, Promise<any>> = {};
@@ -91,25 +105,30 @@ export function CountyMap({ choropleth, facilities, markers = [], state, selecte
           "circle-color": "#eb6834", "circle-opacity": 0.8, "circle-stroke-color": "#ffffff", "circle-stroke-width": 0.6,
         },
       });
-      map.on("mousemove", "county-fill", (e) => {
+      map.on("mousemove", "county-fill", (e: MapLayerMouseEvent) => {
         const f = e.features?.[0]; if (!f) return;
         map.getCanvas().style.cursor = cb.current ? "pointer" : "";
         const c = choro.current; const v = c?.values[f.properties.fips];
-        popup.setLngLat(e.lngLat).setHTML(
-          `<div style="font:12px/1.35 system-ui"><b>${f.properties.name}, ${f.properties.usps}</b>` +
-          (c ? `<br>${c.label}: <b>${v === null || v === undefined ? "no data" : c.format(v)}</b>` : "") + `</div>`).addTo(map);
+        popup.setLngLat(e.lngLat).setDOMContent(popupNode([
+          { text: `${f.properties.name}, ${f.properties.usps}`, bold: true },
+          ...(c ? [{ text: `${c.label}: ${v === null || v === undefined ? "no data" : c.format(v)}` }] : []),
+        ])).addTo(map);
       });
       map.on("mouseleave", "county-fill", () => { popup.remove(); map.getCanvas().style.cursor = ""; });
-      map.on("mousemove", "facilities", (e) => {
+      map.on("mousemove", "facilities", (e: MapLayerMouseEvent) => {
         const p = e.features?.[0]?.properties; if (!p) return;
-        popup.setLngLat(e.lngLat).setHTML(`<div style="font:12px/1.35 system-ui"><b>${p.name || "Unnamed site"}</b><br>${p.city ?? ""}, ${p.usps}<br>${p.n} recruiting interventional ${p.n === 1 ? "study" : "studies"}${p.anon ? "<br><i>Sponsor-anonymised site name</i>" : ""}</div>`).addTo(map);
+        popup.setLngLat(e.lngLat).setDOMContent(popupNode([
+          { text: p.name || "Unnamed site", bold: true }, { text: `${p.city ?? ""}, ${p.usps}` },
+          { text: `${p.n} recruiting interventional ${Number(p.n) === 1 ? "study" : "studies"}` },
+          ...(p.anon === true || p.anon === "true" ? [{ text: "Sponsor-anonymised site name" }] : []),
+        ])).addTo(map);
       });
-      map.on("click", "county-fill", (e) => {
+      map.on("click", "county-fill", (e: MapLayerMouseEvent) => {
         // a click on a site dot belongs to the site, not the county underneath
         if (fcb.current && map.queryRenderedFeatures(e.point, { layers: ["facilities"] }).length) return;
         const p = e.features?.[0]?.properties; if (p) cb.current?.(p.fips, p.name, p.usps, e.lngLat);
       });
-      map.on("click", "facilities", (e) => { const p = e.features?.[0]?.properties; if (p && fcb.current) fcb.current(Number(p.id)); });
+      map.on("click", "facilities", (e: MapLayerMouseEvent) => { const p = e.features?.[0]?.properties; if (p && fcb.current) fcb.current(Number(p.id)); });
       map.on("mouseenter", "facilities", () => { if (fcb.current) map.getCanvas().style.cursor = "pointer"; });
       setReady(true);
     });

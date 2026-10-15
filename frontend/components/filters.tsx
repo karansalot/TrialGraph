@@ -40,7 +40,12 @@ export function FiltersProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, [pathname]);
   useEffect(() => { if (hydrated) writeUrl(f); }, [f, hydrated]);
-  const safe = meta && !meta.categories.some((c) => c.id === f.category) ? { ...f, category: "all" } : f;
+  // URL values are untrusted input: anything that is not a known category/state is ignored
+  const safe = meta ? {
+    ...f,
+    category: meta.categories.some((c) => c.id === f.category) ? f.category : "all",
+    state: meta.states.some((x) => x.usps === f.state) ? f.state : "",
+  } : (/^[a-z0-9_]{1,40}$/.test(f.category) && /^([A-Z]{2})?$/.test(f.state) ? f : { ...f, category: "all", state: "" });
   const value = useMemo<Ctx>(() => ({
     ...safe, meta, error, set: (p) => setF((o) => ({ ...o, ...p })),
     categoryLabel: meta?.categories.find((c) => c.id === safe.category)?.label ?? "All oncology",

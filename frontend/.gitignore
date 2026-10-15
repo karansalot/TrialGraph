@@ -43,3 +43,4 @@ next-env.d.ts
 /out/
 /.next-static/
 /out-pages/
+/public/maplibre/

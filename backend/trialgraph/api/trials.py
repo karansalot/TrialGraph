@@ -31,7 +31,8 @@ def list_trials(
     where, p = ["TRUE"], {}
     if not include_non_oncology:
         where.append("s.oncology_basis <> 'not_oncology'")
-    if q and q.strip():
+    q = (q or "").replace("\x00", "")[:200]
+    if q.strip():
         p["q"] = q.strip()
         where.append("(to_tsvector('english', s.search_text) @@ websearch_to_tsquery('english', :q) OR s.nct_id = upper(:q))")
     if status:
