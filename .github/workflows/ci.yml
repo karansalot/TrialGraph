@@ -23,7 +23,7 @@ jobs:
     defaults: { run: { working-directory: frontend } }
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with: { package_json_file: frontend/package.json }
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: pnpm, cache-dependency-path: frontend/pnpm-lock.yaml }
@@ -62,7 +62,7 @@ jobs:
         run: trialgraph all
       - name: Data-validation + API tests
         run: cd backend && pytest -q
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with: { package_json_file: frontend/package.json }
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: pnpm, cache-dependency-path: frontend/pnpm-lock.yaml }
