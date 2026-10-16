@@ -31,7 +31,7 @@ jobs:
       - run: trialgraph all --refresh
       - run: cd backend && pytest -q
       - run: trialgraph freshness
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: lineage
           path: |
